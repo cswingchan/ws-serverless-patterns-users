@@ -88,10 +88,6 @@ def lambda_handler(event, context):
             )
             response_body = request_json
             status_code = 200
-    except Exception as err:
-        status_code = 400
-        response_body = {'Error:': str(err)}
-        print(str(err))
     return {
         'statusCode': status_code,
         'body': json.dumps(response_body),
