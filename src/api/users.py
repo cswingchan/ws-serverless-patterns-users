@@ -22,72 +22,72 @@ def lambda_handler(event, context):
         'Access-Control-Allow-Origin': '*'
         }
 
-    try:
-        # Get number of all Users
-        if route_key == 'GET /users/count':
-            my_invalid_function()
-            ddb_response = ddbTable.scan(Select='COUNT')
-            # return list of items instead of full DynamoDB response
-            response_body = {'Count': ddb_response['Count']}
-            status_code = 200
-            
-        # Get a list of all Users
-        if route_key == 'GET /users':
-            ddb_response = ddbTable.scan(Select='ALL_ATTRIBUTES')
-            # return list of items instead of full DynamoDB response
-            response_body = ddb_response['Items']
-            status_code = 200
-
-        # CRUD operations for a single User
-       
-        # Read a user by ID
-        if route_key == 'GET /users/{userid}':
-            # get data from the database
-            ddb_response = ddbTable.get_item(
-                Key={'userid': event['pathParameters']['userid']}
-            )
-            # return single item instead of full DynamoDB response
-            if 'Item' in ddb_response:
-                response_body = ddb_response['Item']
-            else:
-                response_body = {}
-            status_code = 200
+    # Get number of all Users
+    if route_key == 'GET /users/count':
+        my_invalid_function()
+        ddb_response = ddbTable.scan(Select='COUNT')
+        # return list of items instead of full DynamoDB response
+        response_body = {'Count': ddb_response['Count']}
+        status_code = 200
         
-        # Delete a user by ID
-        if route_key == 'DELETE /users/{userid}':
-            # delete item in the database
-            ddbTable.delete_item(
-                Key={'userid': event['pathParameters']['userid']}
-            )
+    # Get a list of all Users
+    if route_key == 'GET /users':
+        ddb_response = ddbTable.scan(Select='ALL_ATTRIBUTES')
+        # return list of items instead of full DynamoDB response
+        response_body = ddb_response['Items']
+        status_code = 200
+
+    # CRUD operations for a single User
+   
+    # Read a user by ID
+    if route_key == 'GET /users/{userid}':
+        # get data from the database
+        ddb_response = ddbTable.get_item(
+            Key={'userid': event['pathParameters']['userid']}
+        )
+        # return single item instead of full DynamoDB response
+        if 'Item' in ddb_response:
+            response_body = ddb_response['Item']
+        else:
             response_body = {}
-            status_code = 200
-        
-        # Create a new user 
-        if route_key == 'POST /users':
-            request_json = json.loads(event['body'])
-            request_json['timestamp'] = datetime.now().isoformat()
-            # generate unique id if it isn't present in the request
-            if 'userid' not in request_json:
-                request_json['userid'] = str(uuid.uuid1())
-            # update the database
-            ddbTable.put_item(
-                Item=request_json
-            )
-            response_body = request_json
-            status_code = 200
+        status_code = 200
+    
+    # Delete a user by ID
+    if route_key == 'DELETE /users/{userid}':
+        # delete item in the database
+        ddbTable.delete_item(
+            Key={'userid': event['pathParameters']['userid']}
+        )
+        response_body = {}
+        status_code = 200
+    
+    # Create a new user 
+    if route_key == 'POST /users':
+        request_json = json.loads(event['body'])
+        request_json['timestamp'] = datetime.now().isoformat()
+        # generate unique id if it isn't present in the request
+        if 'userid' not in request_json:
+            request_json['userid'] = str(uuid.uuid1())
+        # update the database
+        ddbTable.put_item(
+            Item=request_json
+        )
+        response_body = request_json
+        status_code = 200
 
-        # Update a specific user by ID
-        if route_key == 'PUT /users/{userid}':
-            # update item in the database
-            request_json = json.loads(event['body'])
-            request_json['timestamp'] = datetime.now().isoformat()
-            request_json['userid'] = event['pathParameters']['userid']
-            # update the database
-            ddbTable.put_item(
-                Item=request_json
-            )
-            response_body = request_json
-            status_code = 200
+    # Update a specific user by ID
+    if route_key == 'PUT /users/{userid}':
+        # update item in the database
+        request_json = json.loads(event['body'])
+        request_json['timestamp'] = datetime.now().isoformat()
+        request_json['userid'] = event['pathParameters']['userid']
+        # update the database
+        ddbTable.put_item(
+            Item=request_json
+        )
+        response_body = request_json
+        status_code = 200
+            
     return {
         'statusCode': status_code,
         'body': json.dumps(response_body),
