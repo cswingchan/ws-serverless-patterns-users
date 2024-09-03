@@ -25,6 +25,7 @@ def lambda_handler(event, context):
     try:
         # Get number of all Users
         if route_key == 'GET /users/count':
+            my_invalid_function()
             ddb_response = ddbTable.scan(Select='COUNT')
             # return list of items instead of full DynamoDB response
             response_body = {'Count': ddb_response['Count']}
