@@ -37,9 +37,7 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
-        Alarms:
-          - !Ref UsersFunctionErrorsAlarm
-        Type: Canary10Percent5Minutes 
+        Type: AllAtOnce 
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
