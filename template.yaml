@@ -37,7 +37,7 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Enabled: true
-        Type: AllAtOnce 
+        Type: Canary10Percent5Minutes 
       Environment:
         Variables:
           USERS_TABLE: !Ref UsersTable
